@@ -9,6 +9,8 @@ import Typography from "components/SuiTypography";
 import Button from "components/SuiButton";
 import Table from "components/SuiTable";
 
+import BarChart from "examples/Charts/BarCharts/VerticalBarChart";
+
 import CreditCardIcon from "examples/Icons/CreditCard";
 import SpaceShipIcon from "examples/Icons/SpaceShip";
 import CubeIcon from "examples/Icons/Cube";
@@ -40,6 +42,57 @@ const cards = [
     icon: <SpaceShipIcon size="25px" />,
   },
 ];
+
+const chartData = {
+  labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+  datasets: [
+    {
+      label: "JNE",
+      color: "info",
+      data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
+    },
+    {
+      label: "POST",
+      color: "dark",
+      data: [30, 90, 40, 140, 290, 290, 340, 230, 400],
+    },
+    {
+      label: "TIKI",
+      color: "primary",
+      data: [40, 80, 70, 90, 30, 90, 140, 130, 200],
+    },
+    {
+      label: "Wahana",
+      color: "warning",
+      data: [40, 80, 70, 90, 30, 90, 140, 130, 200],
+    },
+    {
+      label: "Ninja",
+      color: "error",
+      data: [40, 80, 70, 90, 30, 90, 140, 130, 200],
+    },
+    {
+      label: "Ninja",
+      color: "error",
+      data: [40, 80, 70, 90, 30, 90, 140, 130, 200],
+    },
+    {
+      label: "Lion",
+      color: "secondary",
+      data: [40, 80, 70, 90, 30, 90, 140, 130, 200],
+    },
+    {
+      label: "JNT",
+      color: "success",
+      data: [40, 80, 70, 90, 30, 90, 140, 130, 200],
+    },
+    {
+      label: "SICEPAT",
+      color: "light",
+      data: [40, 80, 70, 90, 30, 90, 140, 130, 200],
+    },
+  ],
+};
 
 function Dashboard() {
   const renderHeader = useCallback(
@@ -85,6 +138,15 @@ function Dashboard() {
     []
   );
 
+  const renderPackagesStatistic = useCallback(
+    () => (
+      <Grid item md={7}>
+        <BarChart chart={chartData} title="Statik Pengiriman" height="25rem" />
+      </Grid>
+    ),
+    []
+  );
+
   const renderPackagesList = useCallback(
     () => (
       <Table
@@ -104,6 +166,9 @@ function Dashboard() {
       <Box py={3} px={2}>
         {renderHeader()}
         {renderCards()}
+        <Grid container spacing={3} mb={3}>
+          {renderPackagesStatistic()}
+        </Grid>
         {renderPackagesList()}
       </Box>
     </DashboardLayout>

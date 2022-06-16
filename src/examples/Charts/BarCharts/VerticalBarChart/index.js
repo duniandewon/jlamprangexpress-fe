@@ -43,7 +43,7 @@ function VerticalBarChart({ title, description, height, chart }) {
         borderRadius: 4,
         backgroundColor: colors[dataset.color]
           ? colors[dataset.color || "dark"].main
-          : colors.dark.main,
+          : dataset.color,
         fill: false,
         maxBarThickness: 35,
       }))

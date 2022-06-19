@@ -8,6 +8,7 @@ import Box from "components/SuiBox";
 import Typography from "components/SuiTypography";
 import Button from "components/SuiButton";
 import Table from "components/SuiTable";
+import DoughnutChart from "components/SuiDoughnutChart";
 
 import BarChart from "examples/Charts/BarCharts/VerticalBarChart";
 
@@ -94,6 +95,24 @@ const chartData = {
   ],
 };
 
+const doughnutChartData = {
+  labels: ["JNE", "POS", "TIKI", "Wahana", "Ninja", "Lion", "JNT", "SICEPAT"],
+  datasets: {
+    label: "# of Votes",
+    data: [22128, 12316, 6178, 19013, 30, 5176, 2110, 9],
+    backgroundColors: [
+      "rgba(255, 99, 132, 1)",
+      "rgba(54, 162, 235, 1)",
+      "rgba(255, 206, 86, 1)",
+      "rgba(75, 192, 192, 1)",
+      "rgba(153, 102, 255, 1)",
+      "rgba(255, 159, 64, 1)",
+      "rgba(153, 234, 215, 1)",
+      "rgba(255, 27, 100, 1)",
+    ],
+  },
+};
+
 function Dashboard() {
   const renderHeader = useCallback(
     () => (
@@ -140,7 +159,7 @@ function Dashboard() {
 
   const renderPackagesStatistic = useCallback(
     () => (
-      <Grid item md={7}>
+      <Grid item md={12} lg={8}>
         <BarChart chart={chartData} title="Statik Pengiriman" height="25rem" />
       </Grid>
     ),
@@ -168,6 +187,9 @@ function Dashboard() {
         {renderCards()}
         <Grid container spacing={3} mb={3}>
           {renderPackagesStatistic()}
+          <Grid item md={12} lg={4}>
+            <DoughnutChart title="Trend Pengiriman" chart={doughnutChartData} />
+          </Grid>
         </Grid>
         {renderPackagesList()}
       </Box>

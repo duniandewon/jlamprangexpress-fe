@@ -50,6 +50,7 @@ function DataTable({
   noEndBorder,
   title,
   action,
+  onClick,
 }) {
   const defaultValue = entriesPerPage.defaultValue ? entriesPerPage.defaultValue : 10;
   const entries = entriesPerPage.entries ? entriesPerPage.entries : [5, 10, 15, 20, 25];
@@ -178,7 +179,7 @@ function DataTable({
               </SuiBox>
             )}
             {action && (
-              <SuiButton variant="gradient" color="dark">
+              <SuiButton variant="gradient" color="dark" onClick={onClick}>
                 {action}
               </SuiButton>
             )}
@@ -279,11 +280,13 @@ DataTable.defaultProps = {
   noEndBorder: false,
   title: "",
   action: "",
+  onClick: () => null,
 };
 
 // Typechecking props for the DataTable
 DataTable.propTypes = {
   title: PropTypes.string,
+  onClick: PropTypes.func,
   action: PropTypes.string,
   entriesPerPage: PropTypes.oneOfType([
     PropTypes.shape({

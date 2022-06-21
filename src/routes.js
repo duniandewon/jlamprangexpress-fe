@@ -1,4 +1,5 @@
 import Dashboard from "pages/DashboardHome";
+import Members from "pages/Members";
 
 // Soft UI Dashboard PRO React icons
 import Shop from "examples/Icons/Shop";
@@ -21,7 +22,7 @@ const routes = [
     route: "/member",
     noCollapse: true,
     icon: <Shop size="12px" />,
-    component: <Dashboard />,
+    component: <Members />,
   },
   {
     type: "collapse",

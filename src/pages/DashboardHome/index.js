@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { useCallback, useRef } from "react";
 
 import Grid from "@mui/material/Grid";
 
@@ -18,6 +18,9 @@ import CubeIcon from "examples/Icons/Cube";
 import ShopIcon from "examples/Icons/Shop";
 
 import Card from "pages/DashboardHome/Card";
+
+import DepositModal from "modals/DepositModal";
+import InputPackagesModal from "modals/InputPackageModal";
 
 import data from "pages/DashboardHome/dataTableData";
 
@@ -114,6 +117,13 @@ const doughnutChartData = {
 };
 
 function Dashboard() {
+  const depositModalRef = useRef();
+  const inputPackageModalRef = useRef();
+
+  const handleOpendepositModal = () => depositModalRef.current.toggleModal();
+
+  const handleOpenInputPackageModal = () => inputPackageModalRef.current.toggleModal();
+
   const renderHeader = useCallback(
     () => (
       <Grid container mb={3}>
@@ -131,10 +141,10 @@ function Dashboard() {
             <Button variant="gradient" color="dark">
               Add Memeber
             </Button>
-            <Button variant="gradient" color="dark">
+            <Button variant="gradient" color="dark" onClick={handleOpendepositModal}>
               Deposit
             </Button>
-            <Button variant="gradient" color="dark">
+            <Button variant="gradient" color="dark" onClick={handleOpenInputPackageModal}>
               Input Paket
             </Button>
           </Box>
@@ -172,6 +182,7 @@ function Dashboard() {
         title="List Paket"
         table={data}
         action="input paket"
+        onClick={handleOpenInputPackageModal}
         entriesPerPage={{ defaultValue: 15, entries: [10, 15, 20, 25] }}
         pagination={{ variant: "gradient", color: "dark" }}
         canSearch
@@ -193,6 +204,8 @@ function Dashboard() {
         </Grid>
         {renderPackagesList()}
       </Box>
+      <DepositModal ref={depositModalRef} />
+      <InputPackagesModal ref={inputPackageModalRef} />
     </DashboardLayout>
   );
 }

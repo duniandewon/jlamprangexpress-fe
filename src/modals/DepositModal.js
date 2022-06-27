@@ -1,8 +1,6 @@
 /* eslint-disable no-console */
 import { forwardRef, useImperativeHandle, useState } from "react";
 
-import { useFormik } from "formik";
-
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -20,11 +18,11 @@ const options = [
   },
   {
     id: "KS-2",
-    value: "Mohammad Sofie",
+    value: "Sofie",
   },
   {
     id: "KS-3",
-    value: "Aminah Hanan",
+    value: "Hanan",
   },
   {
     id: "KS-4",
@@ -46,23 +44,30 @@ const options = [
 
 const DepositModal = forwardRef((_, ref) => {
   const [modalOpen, setModalOpen] = useState(false);
+  const [deposit, setDeposit] = useState("");
+  const [member, setMember] = useState({});
 
   const toggleModal = () => setModalOpen((prevState) => !prevState);
 
-  useImperativeHandle(ref, () => ({ toggleModal }), []);
-
-  const onSubmit = (values) => {
-    console.log(values);
-    toggleModal();
+  const handleChange = (e) => {
+    setDeposit(e.target.value);
   };
 
-  const { values, handleChange, handleBlur, handleSubmit } = useFormik({
-    initialValues: {
-      member: "",
-      amount: "",
-    },
-    onSubmit,
-  });
+  const handleSelect = (mem) => setMember(mem);
+
+  useImperativeHandle(ref, () => ({ toggleModal }), []);
+
+  const resetState = () => {
+    setDeposit("");
+    setMember({});
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    console.log({ deposit, member });
+    if (Object.keys(member).length) toggleModal();
+    resetState();
+  };
 
   const style = {
     position: "absolute",
@@ -82,10 +87,10 @@ const DepositModal = forwardRef((_, ref) => {
         <Typography variant="h3" mb={2}>
           Deposit Saldo
         </Typography>
-        <form autoComplete="off" onSubmit={handleSubmit} noValidate>
+        <form autoComplete="off" onSubmit={onSubmit} noValidate>
           <Grid container spacing={3} mb={2}>
             <Grid item lg={6}>
-              <Select label="Pilih member" options={options} />
+              <Select label="Pilih member" options={options} onSelect={handleSelect} />
             </Grid>
             <Grid item lg={6}>
               <TextField
@@ -93,9 +98,8 @@ const DepositModal = forwardRef((_, ref) => {
                 size="large"
                 placeholder="amount"
                 name="amount"
-                value={values.amount}
+                value={deposit}
                 onChange={handleChange}
-                onBlur={handleBlur}
               />
             </Grid>
           </Grid>

@@ -1,8 +1,4 @@
-/* eslint-disable no-use-before-define */
-/* eslint-disable no-console */
 import { forwardRef, useImperativeHandle, useState } from "react";
-
-import { useFormik } from "formik";
 
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
@@ -21,11 +17,11 @@ const options = [
   },
   {
     id: "KS-2",
-    value: "Mohammad Sofie",
+    value: "Sofie",
   },
   {
     id: "KS-3",
-    value: "Aminah Hanan",
+    value: "Hanan",
   },
   {
     id: "KS-4",
@@ -47,35 +43,100 @@ const options = [
 
 const InputPackageModal = forwardRef((_, ref) => {
   const [modalOpen, setModalOpen] = useState(false);
+  const [member, setMember] = useState({});
+  const [recietNumber, setRecietNumber] = useState("");
+  const [expedition, setExpedition] = useState("");
+  const [reciever, setReciever] = useState("");
+  const [weight, setWeight] = useState("");
+  const [address, setAddress] = useState("");
+  const [additionalFee, setAdditionalFee] = useState("");
+  const [discount, setDiscount] = useState("");
+  const [cost, setCost] = useState("");
+  const [platform, setPlatform] = useState("");
 
-  const toggleModal = () => {
-    setModalOpen((prevState) => !prevState);
-    resetForm();
+  const resetForm = () => {
+    setMember({});
+    setRecietNumber("");
+    setExpedition("");
+    setReciever("");
+    setWeight("");
+    setAddress("");
+    setAdditionalFee("");
+    setDiscount("");
+    setCost("");
+    setPlatform("");
   };
 
-  const onSubmit = (values) => {
-    console.log(values);
-    toggleModal();
+  const toggleModal = () => {
     resetForm();
+    setModalOpen((prevState) => !prevState);
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    console.log({
+      member,
+      recietNumber,
+      expedition,
+      reciever,
+      weight,
+      address,
+      additionalFee,
+      discount,
+      cost,
+      platform,
+    });
+    toggleModal();
+  };
+
+  const handleSelect = (mem) => setMember(mem);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    switch (name) {
+      case "recietNumber":
+        setRecietNumber(value);
+        break;
+
+      case "expedition":
+        setExpedition(value);
+        break;
+
+      case "reciever":
+        setReciever(value);
+        break;
+
+      case "weight":
+        setWeight(value);
+        break;
+
+      case "address":
+        setAddress(value);
+        break;
+
+      case "additionalFee":
+        setAdditionalFee(value);
+        break;
+
+      case "discount":
+        setDiscount(value);
+        break;
+
+      case "cost":
+        setCost(value);
+        break;
+
+      case "platform":
+        setPlatform(value);
+        break;
+
+      default:
+        break;
+    }
   };
 
   useImperativeHandle(ref, () => ({ toggleModal }), []);
-
-  const { values, handleChange, handleBlur, handleSubmit, resetForm } = useFormik({
-    initialValues: {
-      user: "",
-      recietNumber: "",
-      expedition: "",
-      reciever: "",
-      weight: "",
-      address: "",
-      additionalFee: "",
-      discount: "",
-      cost: "",
-      platform: "",
-    },
-    onSubmit,
-  });
 
   const style = {
     position: "absolute",
@@ -92,7 +153,7 @@ const InputPackageModal = forwardRef((_, ref) => {
   const renderleftSide = () => (
     <Grid container spacing={3}>
       <Grid item xs={12}>
-        <Select label="Pilih member" options={options} />
+        <Select label="Pilih member" options={options} onSelect={handleSelect} />
       </Grid>
       <Grid item xs={12}>
         <Grid container spacing={3}>
@@ -102,9 +163,8 @@ const InputPackageModal = forwardRef((_, ref) => {
               size="large"
               placeholder="Nomer Resi"
               name="recietNumber"
-              value={values.recietNumber}
+              value={recietNumber}
               onChange={handleChange}
-              onBlur={handleBlur}
             />
           </Grid>
           <Grid item lg={3}>
@@ -113,9 +173,8 @@ const InputPackageModal = forwardRef((_, ref) => {
               size="large"
               placeholder="Expedisi"
               name="expedition"
-              value={values.expedition}
+              value={expedition}
               onChange={handleChange}
-              onBlur={handleBlur}
             />
           </Grid>
           <Grid item lg={3}>
@@ -124,9 +183,8 @@ const InputPackageModal = forwardRef((_, ref) => {
               size="large"
               placeholder="Platform"
               name="platform"
-              value={values.platform}
+              value={platform}
               onChange={handleChange}
-              onBlur={handleBlur}
             />
           </Grid>
           <Grid item xs={12}>
@@ -147,9 +205,8 @@ const InputPackageModal = forwardRef((_, ref) => {
           size="large"
           placeholder="Penerima"
           name="reciever"
-          value={values.reciever}
+          value={reciever}
           onChange={handleChange}
-          onBlur={handleBlur}
         />
       </Grid>
       <Grid item lg={6}>
@@ -158,9 +215,8 @@ const InputPackageModal = forwardRef((_, ref) => {
           size="large"
           placeholder="Alamat / kota tujuan"
           name="address"
-          value={values.address}
+          value={address}
           onChange={handleChange}
-          onBlur={handleBlur}
         />
       </Grid>
       <Grid item lg={3}>
@@ -169,9 +225,8 @@ const InputPackageModal = forwardRef((_, ref) => {
           size="large"
           placeholder="Berat (kg)"
           name="weight"
-          value={values.weight}
+          value={weight}
           onChange={handleChange}
-          onBlur={handleBlur}
         />
       </Grid>
       <Grid item lg={3}>
@@ -180,9 +235,8 @@ const InputPackageModal = forwardRef((_, ref) => {
           size="large"
           placeholder="Tarif"
           name="cost"
-          value={values.cost}
+          value={cost}
           onChange={handleChange}
-          onBlur={handleBlur}
         />
       </Grid>
       <Grid item lg={3}>
@@ -191,9 +245,8 @@ const InputPackageModal = forwardRef((_, ref) => {
           size="large"
           placeholder="Biaya Tambahan"
           name="additionalFee"
-          value={values.additionalFee}
+          value={additionalFee}
           onChange={handleChange}
-          onBlur={handleBlur}
         />
       </Grid>
       <Grid item lg={3}>
@@ -202,9 +255,8 @@ const InputPackageModal = forwardRef((_, ref) => {
           size="large"
           placeholder="Diskon"
           name="discount"
-          value={values.discount}
+          value={discount}
           onChange={handleChange}
-          onBlur={handleBlur}
         />
       </Grid>
       <Grid item lg={6}>
@@ -234,7 +286,7 @@ const InputPackageModal = forwardRef((_, ref) => {
         <Typography variant="h3" mb={2}>
           Input Paket
         </Typography>
-        <form autoComplete="off" onSubmit={handleSubmit} noValidate>
+        <form autoComplete="off" onSubmit={onSubmit}>
           <Grid container spacing={3}>
             <Grid item lg={6}>
               {renderleftSide()}

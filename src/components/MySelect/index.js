@@ -9,7 +9,7 @@ import styles from "components/MySelect/styles";
 import Input from "components/SuiInput";
 import Typography from "components/SuiTypography";
 
-function SuiSelect({ size, label, options }) {
+function SuiSelect({ size, label, options, onSelect }) {
   const [selectOpen, setSelectOpen] = useState(false);
   const [selected, setSelected] = useState("");
   const [search, setSearch] = useState("");
@@ -27,8 +27,9 @@ function SuiSelect({ size, label, options }) {
     resetStates();
   };
 
-  const handleSelect = (e) => {
-    setSelected(e.target.textContent);
+  const handleSelect = (op) => {
+    setSelected(op);
+    onSelect(op);
     handleToggleSelect();
   };
 
@@ -40,7 +41,7 @@ function SuiSelect({ size, label, options }) {
   return (
     <Box sx={root}>
       <Box sx={container} onClick={handleToggleSelect}>
-        {selected || label} <ExpandMoreIcon fontSize="small" />
+        {selected.value || label} <ExpandMoreIcon fontSize="small" />
       </Box>
       <Box sx={optionsContainer}>
         <Box mb={1}>
@@ -49,7 +50,7 @@ function SuiSelect({ size, label, options }) {
         <Box sx={OPTIONS}>
           {filtered.length ? (
             filtered.map((op) => (
-              <Box sx={option} onClick={handleSelect} key={op.id}>
+              <Box sx={option} onClick={() => handleSelect(op)} key={op.id}>
                 {op.value}
               </Box>
             ))
@@ -71,6 +72,7 @@ SuiSelect.defaultProps = {
 SuiSelect.propTypes = {
   size: PropTypes.oneOf(["small", "medium", "large"]),
   label: PropTypes.string.isRequired,
+  onSelect: PropTypes.func.isRequired,
   options: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string,

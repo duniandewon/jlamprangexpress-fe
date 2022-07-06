@@ -158,7 +158,7 @@ function Dashboard() {
     () => (
       <Grid container mb={3} spacing={3}>
         {cards.map((card) => (
-          <Grid item xs={12} md={3} key={card.title}>
+          <Grid item xs={12} md={6} lg={3} key={card.title}>
             <Card {...card} />
           </Grid>
         ))}
@@ -171,6 +171,15 @@ function Dashboard() {
     () => (
       <Grid item md={12} lg={8}>
         <BarChart chart={chartData} title="Statik Pengiriman" height="25rem" />
+      </Grid>
+    ),
+    []
+  );
+
+  const renderPackagesTrend = useCallback(
+    () => (
+      <Grid item md={12} lg={4}>
+        <DoughnutChart title="Trend Pengiriman" chart={doughnutChartData} />
       </Grid>
     ),
     []
@@ -198,9 +207,7 @@ function Dashboard() {
         {renderCards()}
         <Grid container spacing={3} mb={3}>
           {renderPackagesStatistic()}
-          <Grid item md={12} lg={4}>
-            <DoughnutChart title="Trend Pengiriman" chart={doughnutChartData} />
-          </Grid>
+          {renderPackagesTrend()}
         </Grid>
         {renderPackagesList()}
       </Box>

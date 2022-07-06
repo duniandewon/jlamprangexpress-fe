@@ -11,6 +11,8 @@ import Button from "components/SuiButton";
 import Typography from "components/SuiTypography";
 import Select from "components/MySelect";
 
+import style from "modals/modalStyle";
+
 const options = [
   {
     id: "KS-1",
@@ -67,18 +69,6 @@ const DepositModal = forwardRef((_, ref) => {
     console.log({ deposit, member });
     if (Object.keys(member).length) toggleModal();
     resetState();
-  };
-
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 800,
-    bgcolor: "background.paper",
-    borderRadius: 3,
-    boxShadow: 24,
-    p: 3,
   };
 
   return (

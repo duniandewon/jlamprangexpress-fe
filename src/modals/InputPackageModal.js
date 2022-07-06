@@ -1,4 +1,5 @@
-import { forwardRef, useImperativeHandle, useState } from "react";
+/* eslint-disable no-unused-vars */
+import { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from "react";
 
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
@@ -9,6 +10,8 @@ import Button from "components/SuiButton";
 import Select from "components/MySelect";
 
 import Typography from "components/SuiTypography";
+
+import style from "modals/modalStyle";
 
 const options = [
   {
@@ -49,10 +52,12 @@ const InputPackageModal = forwardRef((_, ref) => {
   const [reciever, setReciever] = useState("");
   const [weight, setWeight] = useState("");
   const [address, setAddress] = useState("");
-  const [additionalFee, setAdditionalFee] = useState("");
-  const [discount, setDiscount] = useState("");
-  const [cost, setCost] = useState("");
+  const [additionalFee, setAdditionalFee] = useState(0);
+  const [discount, setDiscount] = useState(0);
+  const [cost, setCost] = useState(0);
   const [platform, setPlatform] = useState("");
+
+  const [step, setStep] = useState(0);
 
   const resetForm = () => {
     setMember({});
@@ -61,10 +66,11 @@ const InputPackageModal = forwardRef((_, ref) => {
     setReciever("");
     setWeight("");
     setAddress("");
-    setAdditionalFee("");
-    setDiscount("");
-    setCost("");
+    setAdditionalFee(0);
+    setDiscount(0);
+    setCost(0);
     setPlatform("");
+    setStep(0);
   };
 
   const toggleModal = () => {
@@ -75,7 +81,7 @@ const InputPackageModal = forwardRef((_, ref) => {
   const onSubmit = (e) => {
     e.preventDefault();
     console.log({
-      member,
+      user: member.id,
       recietNumber,
       expedition,
       reciever,
@@ -136,28 +142,46 @@ const InputPackageModal = forwardRef((_, ref) => {
     }
   };
 
-  useImperativeHandle(ref, () => ({ toggleModal }), []);
+  const total = useMemo(() => {
+    const subTotal = parseInt(cost, 10) + parseInt(additionalFee, 10);
 
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 1200,
-    bgcolor: "background.paper",
-    borderRadius: 3,
-    boxShadow: 24,
-    p: 3,
+    const grandTotal = subTotal - (subTotal * parseInt(discount, 10)) / 100;
+
+    return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(
+      grandTotal
+    );
+  }, [step, discount, cost, additionalFee]);
+
+  const handleCheckReciet = () => {
+    if (!Object.keys(member).length) return alert("Pilih member terlebih dahulu");
+
+    if (!recietNumber.length) return alert("Isi nomor resi terlebih dahulu");
+
+    setReciever("Abolfaz");
+
+    setAddress("Depok");
+
+    setWeight("139");
+
+    setCost(20000);
+
+    setAdditionalFee(5000);
+
+    setDiscount(0);
+
+    return setStep(1);
   };
 
-  const renderleftSide = () => (
+  useImperativeHandle(ref, () => ({ toggleModal }), []);
+
+  const renderCheckReciet = () => (
     <Grid container spacing={3}>
       <Grid item xs={12}>
         <Select label="Pilih member" options={options} onSelect={handleSelect} />
       </Grid>
       <Grid item xs={12}>
         <Grid container spacing={3}>
-          <Grid item lg={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               type="text"
               size="large"
@@ -167,7 +191,7 @@ const InputPackageModal = forwardRef((_, ref) => {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item lg={3}>
+          <Grid item xs={12} md={3}>
             <TextField
               type="text"
               size="large"
@@ -177,7 +201,7 @@ const InputPackageModal = forwardRef((_, ref) => {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item lg={3}>
+          <Grid item xs={12} md={3}>
             <TextField
               type="text"
               size="large"
@@ -187,8 +211,8 @@ const InputPackageModal = forwardRef((_, ref) => {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item xs={12}>
-            <Button type="button" variant="gradient" color="dark">
+          <Grid item xs={12} sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Button type="button" variant="gradient" color="dark" onClick={handleCheckReciet}>
               cek resi
             </Button>
           </Grid>
@@ -197,9 +221,9 @@ const InputPackageModal = forwardRef((_, ref) => {
     </Grid>
   );
 
-  const renderRightSide = () => (
+  const renderPackageInfo = () => (
     <Grid container spacing={3}>
-      <Grid item lg={6}>
+      <Grid item xs={12} lg={6}>
         <TextField
           type="text"
           size="large"
@@ -209,7 +233,7 @@ const InputPackageModal = forwardRef((_, ref) => {
           onChange={handleChange}
         />
       </Grid>
-      <Grid item lg={6}>
+      <Grid item xs={12} lg={6}>
         <TextField
           type="text"
           size="large"
@@ -219,7 +243,7 @@ const InputPackageModal = forwardRef((_, ref) => {
           onChange={handleChange}
         />
       </Grid>
-      <Grid item lg={3}>
+      <Grid item xs={12} lg={3}>
         <TextField
           type="text"
           size="large"
@@ -229,9 +253,9 @@ const InputPackageModal = forwardRef((_, ref) => {
           onChange={handleChange}
         />
       </Grid>
-      <Grid item lg={3}>
+      <Grid item xs={12} lg={3}>
         <TextField
-          type="text"
+          type="number"
           size="large"
           placeholder="Tarif"
           name="cost"
@@ -239,9 +263,9 @@ const InputPackageModal = forwardRef((_, ref) => {
           onChange={handleChange}
         />
       </Grid>
-      <Grid item lg={3}>
+      <Grid item xs={12} lg={3}>
         <TextField
-          type="text"
+          type="number"
           size="large"
           placeholder="Biaya Tambahan"
           name="additionalFee"
@@ -249,9 +273,9 @@ const InputPackageModal = forwardRef((_, ref) => {
           onChange={handleChange}
         />
       </Grid>
-      <Grid item lg={3}>
+      <Grid item xs={12} lg={3}>
         <TextField
-          type="text"
+          type="number"
           size="large"
           placeholder="Diskon"
           name="discount"
@@ -259,15 +283,15 @@ const InputPackageModal = forwardRef((_, ref) => {
           onChange={handleChange}
         />
       </Grid>
-      <Grid item lg={6}>
+      <Grid item xs={12} lg={6}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Typography variant="h4" fontWeight="bold">
             Total:
           </Typography>
-          <Typography variant="body1">Rp 0.00</Typography>
+          <Typography variant="body1">{total}</Typography>
         </Box>
       </Grid>
-      <Grid item lg={6}>
+      <Grid item xs={12} lg={6}>
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
           <Button type="submit" variant="gradient" color="dark">
             save
@@ -287,14 +311,7 @@ const InputPackageModal = forwardRef((_, ref) => {
           Input Paket
         </Typography>
         <form autoComplete="off" onSubmit={onSubmit}>
-          <Grid container spacing={3}>
-            <Grid item lg={6}>
-              {renderleftSide()}
-            </Grid>
-            <Grid item lg={6}>
-              {renderRightSide()}
-            </Grid>
-          </Grid>
+          {step >= 1 ? renderPackageInfo() : renderCheckReciet()}
         </form>
       </Box>
     </Modal>

@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 // react-router components
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
@@ -40,12 +40,15 @@ import { useSoftUIController, setMiniSidenav } from "context";
 import brand from "assets/images/logo-ct.png";
 
 import ProtectedRoute from "utils/ProtectedRoute";
+import useAuth from "utils/useAuth";
 
 export default function App() {
   const [controller, dispatch] = useSoftUIController();
   const { miniSidenav, direction, layout, sidenavColor } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const { pathname } = useLocation();
+
+  const { isLoggedIn } = useAuth();
 
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
@@ -73,8 +76,6 @@ export default function App() {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
   }, [pathname]);
-
-  const ISLOGGEDIN = useMemo(() => !!localStorage.getItem("token"), [pathname]);
 
   const getRoutes = (allRoutes) =>
     allRoutes.map((route) => {
@@ -107,10 +108,10 @@ export default function App() {
         />
       )}
       <Routes>
-        <Route element={<ProtectedRoute isAllowed={ISLOGGEDIN} />}>
+        <Route element={<ProtectedRoute isAllowed={isLoggedIn} />}>
           {getRoutes(PRIVATE_ROUTES())}
         </Route>
-        <Route element={<ProtectedRoute isAllowed={!ISLOGGEDIN} redirect="/home" />}>
+        <Route element={<ProtectedRoute isAllowed={!isLoggedIn} redirect="/home" />}>
           {getRoutes(PUBLIC_ROUTES())}
         </Route>
         <Route path="*" element={<Navigate to="/home" />} />

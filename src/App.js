@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 
 // react-router components
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
@@ -74,6 +74,8 @@ export default function App() {
     document.scrollingElement.scrollTop = 0;
   }, [pathname]);
 
+  const ISLOGGEDIN = useMemo(() => !!localStorage.getItem("token"), [pathname]);
+
   const getRoutes = (allRoutes) =>
     allRoutes.map((route) => {
       if (route.collapse) {
@@ -86,6 +88,10 @@ export default function App() {
 
       return null;
     });
+
+  const PRIVATE_ROUTES = useCallback(() => routes.filter((route) => route.protected), []);
+
+  const PUBLIC_ROUTES = useCallback(() => routes.filter((route) => !route.protected), []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -101,10 +107,12 @@ export default function App() {
         />
       )}
       <Routes>
-        <Route element={<ProtectedRoute />}>
-          {getRoutes(routes.filter((route) => route.procted))}
+        <Route element={<ProtectedRoute isAllowed={ISLOGGEDIN} />}>
+          {getRoutes(PRIVATE_ROUTES())}
         </Route>
-        {getRoutes(routes.filter((route) => !route.procted))}
+        <Route element={<ProtectedRoute isAllowed={!ISLOGGEDIN} redirect="/home" />}>
+          {getRoutes(PUBLIC_ROUTES())}
+        </Route>
         <Route path="*" element={<Navigate to="/home" />} />
       </Routes>
     </ThemeProvider>

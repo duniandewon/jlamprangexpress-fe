@@ -41,7 +41,7 @@ const routes = [
     type: "page",
     name: "Login",
     key: "login",
-    route: "/",
+    route: "/login",
     component: <Login />,
     protected: false,
   },

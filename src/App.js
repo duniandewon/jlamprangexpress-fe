@@ -39,6 +39,8 @@ import { useSoftUIController, setMiniSidenav } from "context";
 // Images
 import brand from "assets/images/logo-ct.png";
 
+import ProtectedRoute from "utils/ProtectedRoute";
+
 export default function App() {
   const [controller, dispatch] = useSoftUIController();
   const { miniSidenav, direction, layout, sidenavColor } = controller;
@@ -79,7 +81,7 @@ export default function App() {
       }
 
       if (route.route) {
-        return <Route exact path={route.route} element={route.component} key={route.key} />;
+        return <Route path={route.route} element={route.component} key={route.key} />;
       }
 
       return null;
@@ -99,7 +101,10 @@ export default function App() {
         />
       )}
       <Routes>
-        {getRoutes(routes)}
+        <Route element={<ProtectedRoute />}>
+          {getRoutes(routes.filter((route) => route.procted))}
+        </Route>
+        {getRoutes(routes.filter((route) => !route.procted))}
         <Route path="*" element={<Navigate to="/home" />} />
       </Routes>
     </ThemeProvider>

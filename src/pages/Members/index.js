@@ -2,8 +2,6 @@ import React, { useCallback } from "react";
 
 import Grid from "@mui/material/Grid";
 
-import DashboardLayout from "layout/DashboardLayout";
-
 import Box from "components/SuiBox";
 import Typography from "components/SuiTypography";
 import Button from "components/SuiButton";
@@ -50,12 +48,10 @@ function Users() {
   );
 
   return (
-    <DashboardLayout>
-      <Box py={3} px={2}>
-        {renderHeader()}
-        {renderMembersList()}
-      </Box>
-    </DashboardLayout>
+    <Box py={3} px={2}>
+      {renderHeader()}
+      {renderMembersList()}
+    </Box>
   );
 }
 

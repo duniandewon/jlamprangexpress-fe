@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
 =========================================================
 * Soft UI Dashboard PRO React - v3.1.0
@@ -13,7 +14,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 // react-router components
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
@@ -26,6 +27,9 @@ import CssBaseline from "@mui/material/CssBaseline";
 
 // Soft UI Dashboard PRO React example components
 import Sidenav from "examples/Sidenav";
+
+import DashboardLayout from "layout/DashboardLayout";
+import PageLayout from "layout/PageLayout";
 
 // Soft UI Dashboard PRO React themes
 import theme from "assets/theme";
@@ -40,15 +44,13 @@ import { useSoftUIController, setMiniSidenav } from "context";
 import brand from "assets/images/logo-ct.png";
 
 import ProtectedRoute from "utils/ProtectedRoute";
-import useAuth from "utils/useAuth";
+import PublicRoute from "utils/PublicRoute";
 
 export default function App() {
   const [controller, dispatch] = useSoftUIController();
   const { miniSidenav, direction, layout, sidenavColor } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const { pathname } = useLocation();
-
-  const { isLoggedIn } = useAuth();
 
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
@@ -90,9 +92,9 @@ export default function App() {
       return null;
     });
 
-  const PRIVATE_ROUTES = useCallback(() => routes.filter((route) => route.protected), []);
+  const PRIVATE_ROUTES = useMemo(() => routes.filter((route) => route.protected), []);
 
-  const PUBLIC_ROUTES = useCallback(() => routes.filter((route) => !route.protected), []);
+  const PUBLIC_ROUTES = useMemo(() => routes.filter((route) => !route.protected), []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -108,12 +110,8 @@ export default function App() {
         />
       )}
       <Routes>
-        <Route element={<ProtectedRoute isAllowed={isLoggedIn} />}>
-          {getRoutes(PRIVATE_ROUTES())}
-        </Route>
-        <Route element={<ProtectedRoute isAllowed={!isLoggedIn} redirect="/home" />}>
-          {getRoutes(PUBLIC_ROUTES())}
-        </Route>
+        <Route element={<ProtectedRoute />}>{getRoutes(PRIVATE_ROUTES)}</Route>
+        <Route element={<PublicRoute />}>{getRoutes(PUBLIC_ROUTES)}</Route>
         <Route path="*" element={<Navigate to="/home" />} />
       </Routes>
     </ThemeProvider>

@@ -1,22 +1,29 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Switch from "@mui/material/Switch";
 
-import PageLayout from "layout/PageLayout";
-
 import Typography from "components/SuiTypography";
 import Input from "components/SuiInput";
 import Button from "components/SuiButton";
 
-import useAuth from "utils/useAuth";
+import PageLayout from "layout/PageLayout";
+
+import onLogin from "pages/Login/functions";
+
+import useAuth from "hooks/useAuth";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const { onLogin } = useAuth();
+  const { setAuth } = useAuth();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/home";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,7 +46,10 @@ function Login() {
     e.preventDefault();
 
     if (username && password) {
-      onLogin(username, password);
+      onLogin(username, password, (token) => {
+        setAuth(token);
+        navigate(from, { replace: true });
+      });
     }
   };
 

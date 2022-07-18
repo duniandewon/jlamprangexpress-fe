@@ -7,6 +7,8 @@ import Typography from "components/SuiTypography";
 import Button from "components/SuiButton";
 import Table from "components/SuiTable";
 
+import DashboardLayout from "layout/DashboardLayout";
+
 import data from "pages/Members/dataTableData";
 
 function Users() {
@@ -48,10 +50,12 @@ function Users() {
   );
 
   return (
-    <Box py={3} px={2}>
-      {renderHeader()}
-      {renderMembersList()}
-    </Box>
+    <DashboardLayout>
+      <Box py={3} px={2}>
+        {renderHeader()}
+        {renderMembersList()}
+      </Box>
+    </DashboardLayout>
   );
 }
 

@@ -8,8 +8,27 @@ const useFetchPrivate = () => {
   const { refresh } = useRefreshToken();
   const { auth } = useAuth();
 
+  const privateFetch = (options) =>
+    new Promise((resolve, reject) => {
+      axiosPrivate(options)
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          const defaultError = {
+            code: 500,
+            status: "error",
+            message: "Failed to fetch data. Please contact developer.",
+          };
+
+          if (typeof err.response === "undefined") reject(defaultError);
+          else if (typeof err.response.data === "undefined") reject(defaultError);
+          else reject(err.response.data);
+        });
+    });
+
   useEffect(() => {
-    const reqIntercept = axiosPrivate.interceptors.request(
+    const reqIntercept = axiosPrivate.interceptors.request.use(
       (config) => {
         if (!config.headers.Authorization) {
           config.headers.Authorization = `Bearer ${auth}`;
@@ -41,7 +60,7 @@ const useFetchPrivate = () => {
     };
   }, [auth, refresh]);
 
-  return axiosPrivate;
+  return privateFetch;
 };
 
 export default useFetchPrivate;

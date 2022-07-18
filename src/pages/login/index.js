@@ -11,7 +11,7 @@ import Button from "components/SuiButton";
 
 import PageLayout from "layout/PageLayout";
 
-import onLogin from "pages/Login/functions";
+import onLogin from "pages/login/functions";
 
 import useAuth from "hooks/useAuth";
 

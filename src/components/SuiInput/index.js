@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
 =========================================================
 * Soft UI Dashboard PRO React - v3.1.0

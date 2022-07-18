@@ -1,6 +1,6 @@
 import Dashboard from "pages/DashboardHome";
 import Members from "pages/Members";
-import Login from "pages/Login";
+import Login from "pages/login";
 
 // Soft UI Dashboard PRO React icons
 import Shop from "examples/Icons/Shop";

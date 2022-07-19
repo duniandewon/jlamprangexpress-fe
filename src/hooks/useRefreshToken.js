@@ -1,9 +1,14 @@
+import { useLocation, useNavigate } from "react-router-dom";
+
 import fetch from "utils/fetch";
 
 import useAuth from "hooks/useAuth";
 
 const useRefreshToken = () => {
   const { setAuth } = useAuth();
+
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const refresh = async () => {
     const options = {
@@ -24,8 +29,8 @@ const useRefreshToken = () => {
 
       return accessToken;
     } catch (err) {
-      console.log("refresh token err", err);
-      return 1;
+      setAuth("");
+      return navigate("/login", { state: { from: location }, replace: true });
     }
   };
 

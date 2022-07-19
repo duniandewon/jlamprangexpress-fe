@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /**
 =========================================================
 * Soft UI Dashboard PRO React - v3.1.0
@@ -28,9 +27,6 @@ import CssBaseline from "@mui/material/CssBaseline";
 // Soft UI Dashboard PRO React example components
 import Sidenav from "examples/Sidenav";
 
-import DashboardLayout from "layout/DashboardLayout";
-import PageLayout from "layout/PageLayout";
-
 // Soft UI Dashboard PRO React themes
 import theme from "assets/theme";
 
@@ -45,6 +41,7 @@ import brand from "assets/images/logo-ct.png";
 
 import ProtectedRoute from "utils/ProtectedRoute";
 import PublicRoute from "utils/PublicRoute";
+import PersistLogin from "utils/PersistLogin";
 
 export default function App() {
   const [controller, dispatch] = useSoftUIController();
@@ -110,7 +107,9 @@ export default function App() {
         />
       )}
       <Routes>
-        <Route element={<ProtectedRoute />}>{getRoutes(PRIVATE_ROUTES)}</Route>
+        <Route element={<PersistLogin />}>
+          <Route element={<ProtectedRoute />}>{getRoutes(PRIVATE_ROUTES)}</Route>
+        </Route>
         <Route element={<PublicRoute />}>{getRoutes(PUBLIC_ROUTES)}</Route>
         <Route path="*" element={<Navigate to="/home" />} />
       </Routes>

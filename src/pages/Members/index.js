@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 
 import Grid from "@mui/material/Grid";
 
@@ -9,9 +9,17 @@ import Table from "components/SuiTable";
 
 import DashboardLayout from "layout/DashboardLayout";
 
+import useRefreshToken from "hooks/useRefreshToken";
+
 import data from "pages/Members/dataTableData";
 
 function Users() {
+  const { refresh } = useRefreshToken();
+
+  useEffect(() => {
+    refresh();
+  }, []);
+
   const renderHeader = useCallback(
     () => (
       <Grid container mb={3}>

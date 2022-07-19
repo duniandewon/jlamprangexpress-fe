@@ -3,7 +3,7 @@ import fetch from "utils/fetch";
 import useAuth from "hooks/useAuth";
 
 const useRefreshToken = () => {
-  const { setAuth, auth } = useAuth();
+  const { setAuth } = useAuth();
 
   const refresh = async () => {
     const options = {
@@ -11,7 +11,6 @@ const useRefreshToken = () => {
       url: "/user/refresh-token",
       withCredentials: true,
       headers: {
-        Authorization: `Bearer ${auth}`,
         "Content-Type": "application/json",
       },
     };

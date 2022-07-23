@@ -153,9 +153,9 @@ function DashboardNavbar({ absolute, light, isMini }) {
           </Icon>
         </SuiBox>
         {isMini ? null : (
-          <SuiBox sx={(theme) => navbarRow(theme, { isMini })} onClick={logout}>
+          <SuiBox sx={(theme) => navbarRow(theme, { isMini })}>
             <SuiBox color={light ? "white" : "inherit"}>
-              <SuiBox component="span">
+              <SuiBox component="span" onClick={logout}>
                 <IconButton sx={navbarIconButton} size="small">
                   <Icon
                     sx={({ palette: { dark, white } }) => ({

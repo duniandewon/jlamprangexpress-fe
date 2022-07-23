@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import Box from "@mui/material/Box";
@@ -19,7 +19,7 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const { setAuth } = useAuth();
+  const { setAuth, persist, setPersist } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -37,6 +37,10 @@ function Login() {
         setPassword(value);
         break;
 
+      case "remember-me":
+        setPersist((prev) => !prev);
+        break;
+
       default:
         break;
     }
@@ -52,6 +56,10 @@ function Login() {
       });
     }
   };
+
+  useEffect(() => {
+    localStorage.setItem("persist", persist);
+  }, [persist]);
 
   return (
     <PageLayout>
@@ -119,7 +127,7 @@ function Login() {
               />
             </Box>
             <Box display="flex" justifyContent="flex-end" alignItems="center" mb={2}>
-              <Switch />
+              <Switch name="remember-me" checked={persist} onChange={handleChange} />
               <Typography
                 variant="button"
                 fontWeight="regular"

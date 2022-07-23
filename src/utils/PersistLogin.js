@@ -1,30 +1,38 @@
+/* eslint-disable no-nested-ternary */
 import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
+
+import { useSoftUIController, setLayout } from "context";
 
 import useRefreshToken from "hooks/useRefreshToken";
 import useAuth from "hooks/useAuth";
 
 function PersistLogin() {
+  const [, dispatch] = useSoftUIController();
+
   const [isLoading, setIsLoading] = useState(true);
   const { refresh } = useRefreshToken();
-  const { auth } = useAuth();
+  const { auth, persist } = useAuth();
 
   useEffect(() => {
+    let isMounted = true;
+    setLayout(dispatch, "page");
+
     const verifyRefreshToken = async () => {
-      try {
-        await refresh();
-      } catch (err) {
-        console.error("Persist login error", err);
-      } finally {
-        setIsLoading(false);
-      }
+      await refresh();
+
+      if (isMounted) setIsLoading(false);
     };
 
-    if (!auth) verifyRefreshToken();
+    if (!auth && persist) verifyRefreshToken();
     else setIsLoading(false);
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  return isLoading ? <p>Loading...</p> : <Outlet />;
+  return !persist ? <Outlet /> : isLoading ? <p>Loading...</p> : <Outlet />;
 }
 
 export default PersistLogin;

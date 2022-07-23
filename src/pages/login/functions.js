@@ -18,7 +18,7 @@ const onLogin = async (email, password, success, error) => {
 
     success(accessToken);
   } catch (err) {
-    error(err);
+    if (error) error(err);
   }
 };
 

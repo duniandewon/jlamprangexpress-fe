@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
 
 import Grid from "@mui/material/Grid";
 
@@ -23,8 +23,6 @@ import DepositModal from "modals/DepositModal";
 import InputPackagesModal from "modals/InputPackageModal";
 
 import data from "pages/DashboardHome/dataTableData";
-
-import useRefreshToken from "hooks/useRefreshToken";
 
 const cards = [
   {
@@ -121,12 +119,6 @@ const doughnutChartData = {
 function Dashboard() {
   const depositModalRef = useRef();
   const inputPackageModalRef = useRef();
-
-  const { refresh } = useRefreshToken();
-
-  useEffect(() => {
-    refresh();
-  }, []);
 
   const handleOpendepositModal = () => depositModalRef.current.toggleModal();
 

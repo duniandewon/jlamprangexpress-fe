@@ -1,6 +1,8 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import Grid from "@mui/material/Grid";
+
+import useFetchPrivate from "hooks/useFetchPrivate";
 
 import Box from "components/SuiBox";
 import Typography from "components/SuiTypography";
@@ -11,10 +13,25 @@ import DashboardLayout from "layout/DashboardLayout";
 
 import AddMember from "modals/AddMemberModal";
 
-import data from "pages/Members/dataTableData";
-
 function Users() {
+  const [members, setMembers] = useState([]);
+
   const AddMemberModalRef = useRef();
+  const fetch = useFetchPrivate();
+
+  const dataTableData = useMemo(
+    () => ({
+      columns: [
+        { Header: "nama", accessor: "username", width: "15%" },
+        { Header: "alamat", accessor: "address", width: "20%" },
+        { Header: "No Telp", accessor: "phonenumber", width: "20%" },
+        { Header: "email", accessor: "email", width: "20%" },
+      ],
+
+      rows: members,
+    }),
+    [members]
+  );
 
   const handleOpenAddMemberModal = () => AddMemberModalRef.current.toggleModal();
 
@@ -45,15 +62,34 @@ function Users() {
   const renderMembersList = useCallback(
     () => (
       <Table
-        title="List Paket"
-        table={data}
+        title="List Member"
+        table={dataTableData}
         entriesPerPage={{ defaultValue: 15, entries: [10, 15, 20, 25] }}
         pagination={{ variant: "gradient", color: "dark" }}
         canSearch
       />
     ),
-    []
+    [members]
   );
+
+  useEffect(() => {
+    const getUsers = async () => {
+      const options = {
+        method: "GET",
+        url: "user?page=1&limit=15",
+      };
+
+      try {
+        const res = await fetch(options);
+
+        setMembers(res.data.filter((member) => member.role !== "admin"));
+      } catch (err) {
+        console.log("getUsers error", err);
+      }
+    };
+
+    getUsers();
+  }, []);
 
   return (
     <DashboardLayout>

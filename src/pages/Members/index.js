@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useRef } from "react";
 
 import Grid from "@mui/material/Grid";
 
@@ -9,16 +9,14 @@ import Table from "components/SuiTable";
 
 import DashboardLayout from "layout/DashboardLayout";
 
-import useRefreshToken from "hooks/useRefreshToken";
+import AddMember from "modals/AddMemberModal";
 
 import data from "pages/Members/dataTableData";
 
 function Users() {
-  const { refresh } = useRefreshToken();
+  const AddMemberModalRef = useRef();
 
-  useEffect(() => {
-    refresh();
-  }, []);
+  const handleOpenAddMemberModal = () => AddMemberModalRef.current.toggleModal();
 
   const renderHeader = useCallback(
     () => (
@@ -34,7 +32,7 @@ function Users() {
               justifyContent: "flex-end",
             }}
           >
-            <Button variant="gradient" color="dark">
+            <Button variant="gradient" color="dark" onClick={handleOpenAddMemberModal}>
               Add Memeber
             </Button>
           </Box>
@@ -63,6 +61,7 @@ function Users() {
         {renderHeader()}
         {renderMembersList()}
       </Box>
+      <AddMember ref={AddMemberModalRef} />
     </DashboardLayout>
   );
 }

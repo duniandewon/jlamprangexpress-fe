@@ -1,4 +1,4 @@
-export default {
+export default (width, height) => ({
   position: "absolute",
   top: "50%",
   left: "50%",
@@ -9,10 +9,10 @@ export default {
   p: 3,
   width: {
     xs: "90%",
-    md: "auto",
+    md: width || "auto",
   },
   height: {
     xs: "90%",
-    md: "auto",
+    md: height || "auto",
   },
-};
+});

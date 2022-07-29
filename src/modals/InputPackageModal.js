@@ -305,7 +305,7 @@ const InputPackageModal = forwardRef((_, ref) => {
 
   return (
     <Modal open={modalOpen} onClose={toggleModal}>
-      <Box sx={style}>
+      <Box sx={style(900)}>
         <Typography variant="h3" mb={2}>
           Input Paket
         </Typography>

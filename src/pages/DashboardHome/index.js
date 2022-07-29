@@ -21,6 +21,7 @@ import Card from "pages/DashboardHome/Card";
 
 import DepositModal from "modals/DepositModal";
 import InputPackagesModal from "modals/InputPackageModal";
+import AddMember from "modals/AddMemberModal";
 
 import data from "pages/DashboardHome/dataTableData";
 
@@ -119,10 +120,13 @@ const doughnutChartData = {
 function Dashboard() {
   const depositModalRef = useRef();
   const inputPackageModalRef = useRef();
+  const AddMemberModalRef = useRef();
 
   const handleOpendepositModal = () => depositModalRef.current.toggleModal();
 
   const handleOpenInputPackageModal = () => inputPackageModalRef.current.toggleModal();
+
+  const handleOpenAddMemberModal = () => AddMemberModalRef.current.toggleModal();
 
   const renderHeader = useCallback(
     () => (
@@ -138,7 +142,7 @@ function Dashboard() {
               justifyContent: "flex-end",
             }}
           >
-            <Button variant="gradient" color="dark">
+            <Button variant="gradient" color="dark" onClick={handleOpenAddMemberModal}>
               Add Memeber
             </Button>
             <Button variant="gradient" color="dark" onClick={handleOpendepositModal}>
@@ -213,6 +217,7 @@ function Dashboard() {
       </Box>
       <DepositModal ref={depositModalRef} />
       <InputPackagesModal ref={inputPackageModalRef} />
+      <AddMember ref={AddMemberModalRef} />
     </DashboardLayout>
   );
 }

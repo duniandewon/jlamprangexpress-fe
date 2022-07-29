@@ -73,7 +73,7 @@ const DepositModal = forwardRef((_, ref) => {
 
   return (
     <Modal open={modalOpen} onClose={toggleModal}>
-      <Box sx={style}>
+      <Box sx={style(800)}>
         <Typography variant="h3" mb={2}>
           Deposit Saldo
         </Typography>

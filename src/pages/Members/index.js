@@ -24,7 +24,7 @@ function Users() {
       columns: [
         { Header: "nama", accessor: "username", width: "15%" },
         { Header: "alamat", accessor: "address", width: "20%" },
-        { Header: "No Telp", accessor: "phonenumber", width: "20%" },
+        { Header: "No Telp", accessor: "phoneNumber", width: "20%" },
         { Header: "email", accessor: "email", width: "20%" },
       ],
 

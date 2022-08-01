@@ -1,6 +1,7 @@
 import Dashboard from "pages/DashboardHome";
 import Members from "pages/Members";
 import Login from "pages/login";
+import MembersDetail from "pages/MembersDetail";
 
 // Soft UI Dashboard PRO React icons
 import Shop from "examples/Icons/Shop";
@@ -25,6 +26,14 @@ const routes = [
     noCollapse: true,
     icon: <Shop size="12px" />,
     component: <Members />,
+    protected: true,
+  },
+  {
+    type: "page",
+    name: "Members Detail",
+    key: "members-detail",
+    route: "/member/members-detail",
+    component: <MembersDetail />,
     protected: true,
   },
   {

@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
@@ -229,7 +228,6 @@ function MembersDetail() {
 
   useEffect(() => {
     const getMemberDetails = async () => {
-      const id = searchParams.get("id");
       const options = {
         method: "GET",
         url: `user/${searchParams.get("id")}`,

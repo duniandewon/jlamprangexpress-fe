@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import Grid from "@mui/material/Grid";
@@ -12,6 +13,7 @@ import Table from "components/SuiTable";
 import DashboardLayout from "layout/DashboardLayout";
 
 import AddMember from "modals/AddMemberModal";
+import { Link } from "react-router-dom";
 
 function Users() {
   const [members, setMembers] = useState([]);
@@ -28,7 +30,10 @@ function Users() {
         { Header: "email", accessor: "email", width: "20%" },
       ],
 
-      rows: members,
+      rows: members.map((member) => ({
+        ...member,
+        username: <Link to={`/member/members-detail?id=${member._id}`}>{member.username}</Link>,
+      })),
     }),
     [members]
   );

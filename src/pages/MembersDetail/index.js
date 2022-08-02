@@ -1,4 +1,6 @@
-import { useCallback, useMemo, useState } from "react";
+/* eslint-disable no-unused-vars */
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
@@ -11,7 +13,9 @@ import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import SavingsIcon from "@mui/icons-material/Savings";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
-import Box from "@mui/material/Box";
+import useFetchPrivate from "hooks/useFetchPrivate";
+
+import Box from "components/SuiBox";
 import Typography from "components/SuiTypography";
 import Table from "components/SuiTable";
 
@@ -19,35 +23,39 @@ import DashboardLayout from "layout/DashboardLayout";
 
 function MembersDetail() {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [memberDetails, setMemberDetails] = useState({});
+
+  const fetch = useFetchPrivate();
 
   const handleToggleMenu = (e) => (anchorEl ? setAnchorEl(null) : setAnchorEl(e.currentTarget));
 
-  // const handleCloseMenu = () => setAnchorEl(null);
+  const [searchParams] = useSearchParams();
 
   const cards = useMemo(
-    () => [
-      {
-        title: "tagihan",
-        icon: <PaidIcon fontSize="medium" sx={{ color: "rgb(52, 71, 103)" }} />,
-        number: "Rp 5.000.000",
-      },
-      {
-        title: "saldo",
-        icon: <AccountBalanceWalletIcon fontSize="medium" sx={{ color: "rgb(52, 71, 103)" }} />,
-        number: "Rp 5.000",
-      },
-      {
-        title: "paket",
-        icon: <LocalShippingIcon fontSize="medium" sx={{ color: "rgb(52, 71, 103)" }} />,
-        number: "5.000",
-      },
-      {
-        title: "poin",
-        icon: <SavingsIcon fontSize="medium" sx={{ color: "rgb(52, 71, 103)" }} />,
-        number: "5.000",
-      },
-    ],
-    []
+    () =>
+      memberDetails.username && [
+        {
+          title: "tagihan",
+          icon: <PaidIcon fontSize="medium" sx={{ color: "rgb(52, 71, 103)" }} />,
+          number: `Rp ${memberDetails.credit}`,
+        },
+        {
+          title: "saldo",
+          icon: <AccountBalanceWalletIcon fontSize="medium" sx={{ color: "rgb(52, 71, 103)" }} />,
+          number: `Rp ${memberDetails.balance}`,
+        },
+        {
+          title: "paket",
+          icon: <LocalShippingIcon fontSize="medium" sx={{ color: "rgb(52, 71, 103)" }} />,
+          number: `${memberDetails.deliveries.length}`,
+        },
+        {
+          title: "poin",
+          icon: <SavingsIcon fontSize="medium" sx={{ color: "rgb(52, 71, 103)" }} />,
+          number: `${memberDetails.point}`,
+        },
+      ],
+    [memberDetails]
   );
 
   const dataTableData = useMemo(
@@ -152,6 +160,7 @@ function MembersDetail() {
         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Avatar
+              src={memberDetails.image ? memberDetails.image : ""}
               variant="rounded"
               sx={{
                 width: 60,
@@ -161,11 +170,9 @@ function MembersDetail() {
                 backgroundColor: "#fff",
                 color: "rgb(52, 71, 103)",
               }}
-            >
-              DN
-            </Avatar>
-            <Typography variant="h3" color="white" fontWeight="bold">
-              Dunia Ndewon
+            />
+            <Typography variant="h3" color="white" textTransform="capitalize" fontWeight="bold">
+              {memberDetails.username}
             </Typography>
           </Box>
           <IconButton
@@ -184,7 +191,7 @@ function MembersDetail() {
               Email
             </Typography>
             <Typography variant="body2" color="white">
-              duniandewon@gmail.com
+              {memberDetails.email}
             </Typography>
           </Box>
           <Box>
@@ -192,7 +199,7 @@ function MembersDetail() {
               Phone Number
             </Typography>
             <Typography variant="body2" color="white">
-              085718520582
+              {memberDetails.phoneNumber ? memberDetails.phoneNumber : "-"}
             </Typography>
           </Box>
           <Box sx={{ gridColumn: "1 / 3" }}>
@@ -200,24 +207,45 @@ function MembersDetail() {
               Address
             </Typography>
             <Typography variant="body2" color="white">
-              Jl Jlamprang no 19 pekalongan, jawa tengah
+              {memberDetails.address ? memberDetails.address : "-"}
             </Typography>
           </Box>
         </Box>
       </Box>
     ),
-    [anchorEl]
+    [anchorEl, memberDetails]
   );
 
   const renderHeader = useCallback(
     () => (
       <Box sx={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 2, mb: 3 }}>
         {renderUserDetail()}
-        {cards.map((card) => renderCard(card.title, card.icon, card.number))}
+        {memberDetails.username &&
+          cards.map((card) => renderCard(card.title, card.icon, card.number))}
       </Box>
     ),
-    [anchorEl]
+    [anchorEl, memberDetails]
   );
+
+  useEffect(() => {
+    const getMemberDetails = async () => {
+      const id = searchParams.get("id");
+      const options = {
+        method: "GET",
+        url: `user/${searchParams.get("id")}`,
+      };
+
+      try {
+        const res = await fetch(options);
+
+        setMemberDetails(res.data);
+      } catch (err) {
+        console.log("getMemberDetails error", err);
+      }
+    };
+
+    getMemberDetails();
+  }, []);
 
   return (
     <DashboardLayout>

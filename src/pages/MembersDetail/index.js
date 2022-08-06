@@ -1,5 +1,7 @@
+/* eslint-disable no-underscore-dangle */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
@@ -12,8 +14,6 @@ import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import SavingsIcon from "@mui/icons-material/Savings";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
-import useFetchPrivate from "hooks/useFetchPrivate";
-
 import Box from "components/SuiBox";
 import Typography from "components/SuiTypography";
 import Table from "components/SuiTable";
@@ -24,10 +24,11 @@ function MembersDetail() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [memberDetails, setMemberDetails] = useState({});
 
-  const fetch = useFetchPrivate();
+  const queryClient = useQueryClient();
 
   const handleToggleMenu = (e) => (anchorEl ? setAnchorEl(null) : setAnchorEl(e.currentTarget));
 
+  const members = queryClient.getQueryData(["members"]);
   const [searchParams] = useSearchParams();
 
   const cards = useMemo(
@@ -227,22 +228,7 @@ function MembersDetail() {
   );
 
   useEffect(() => {
-    const getMemberDetails = async () => {
-      const options = {
-        method: "GET",
-        url: `user/${searchParams.get("id")}`,
-      };
-
-      try {
-        const res = await fetch(options);
-
-        setMemberDetails(res.data);
-      } catch (err) {
-        console.log("getMemberDetails error", err);
-      }
-    };
-
-    getMemberDetails();
+    setMemberDetails(members.find((member) => member._id === searchParams.get("id")));
   }, []);
 
   return (

@@ -1,9 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import Grid from "@mui/material/Grid";
-
-import useFetchPrivate from "hooks/useFetchPrivate";
 
 import Box from "components/SuiBox";
 import Typography from "components/SuiTypography";
@@ -18,8 +17,8 @@ import { Link } from "react-router-dom";
 function Users() {
   const [members, setMembers] = useState([]);
 
+  const queryClient = useQueryClient();
   const AddMemberModalRef = useRef();
-  const fetch = useFetchPrivate();
 
   const dataTableData = useMemo(
     () => ({
@@ -78,22 +77,7 @@ function Users() {
   );
 
   useEffect(() => {
-    const getUsers = async () => {
-      const options = {
-        method: "GET",
-        url: "user?page=1&limit=15",
-      };
-
-      try {
-        const res = await fetch(options);
-
-        setMembers(res.data.filter((member) => member.role !== "admin"));
-      } catch (err) {
-        console.log("getUsers error", err);
-      }
-    };
-
-    getUsers();
+    setMembers(queryClient.getQueryData(["members"]));
   }, []);
 
   return (

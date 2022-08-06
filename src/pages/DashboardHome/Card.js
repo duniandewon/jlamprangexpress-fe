@@ -26,7 +26,7 @@ function Card({ title, amount, icon }) {
 
 Card.propTypes = {
   title: PropTypes.string.isRequired,
-  amount: PropTypes.string.isRequired,
+  amount: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   icon: PropTypes.object.isRequired,
 };
 

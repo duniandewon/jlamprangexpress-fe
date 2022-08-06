@@ -1,6 +1,8 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 
 import Grid from "@mui/material/Grid";
+
+import useMembers from "hooks/useMembers";
 
 import DashboardLayout from "layout/DashboardLayout";
 
@@ -24,29 +26,6 @@ import InputPackagesModal from "modals/InputPackageModal";
 import AddMember from "modals/AddMemberModal";
 
 import data from "pages/DashboardHome/dataTableData";
-
-const cards = [
-  {
-    title: "paket",
-    amount: "66,474",
-    icon: <CubeIcon size="25px" />,
-  },
-  {
-    title: "member",
-    amount: "201",
-    icon: <ShopIcon size="25px" />,
-  },
-  {
-    title: "tot. Deposit",
-    amount: "Rp 1,779,492,276",
-    icon: <CreditCardIcon size="25px" />,
-  },
-  {
-    title: "tot. ongkir",
-    amount: "Rp 1,798,565,401",
-    icon: <SpaceShipIcon size="25px" />,
-  },
-];
 
 const chartData = {
   labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
@@ -122,11 +101,39 @@ function Dashboard() {
   const inputPackageModalRef = useRef();
   const AddMemberModalRef = useRef();
 
+  const { data: members, isLoading } = useMembers();
+
   const handleOpendepositModal = () => depositModalRef.current.toggleModal();
 
   const handleOpenInputPackageModal = () => inputPackageModalRef.current.toggleModal();
 
   const handleOpenAddMemberModal = () => AddMemberModalRef.current.toggleModal();
+
+  const cards = useMemo(
+    () => [
+      {
+        title: "paket",
+        amount: "66,474",
+        icon: <CubeIcon size="25px" />,
+      },
+      {
+        title: "member",
+        amount: members ? members.length : "0",
+        icon: <ShopIcon size="25px" />,
+      },
+      {
+        title: "tot. Deposit",
+        amount: "Rp 1,779,492,276",
+        icon: <CreditCardIcon size="25px" />,
+      },
+      {
+        title: "tot. ongkir",
+        amount: "Rp 1,798,565,401",
+        icon: <SpaceShipIcon size="25px" />,
+      },
+    ],
+    [isLoading]
+  );
 
   const renderHeader = useCallback(
     () => (
@@ -155,7 +162,7 @@ function Dashboard() {
         </Grid>
       </Grid>
     ),
-    []
+    [isLoading]
   );
 
   const renderCards = useCallback(
@@ -168,7 +175,7 @@ function Dashboard() {
         ))}
       </Grid>
     ),
-    []
+    [isLoading]
   );
 
   const renderPackagesStatistic = useCallback(

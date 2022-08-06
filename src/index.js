@@ -18,18 +18,24 @@ import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import App from "App";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
 import { AuthProvider } from "context/AuthProvider";
 
 // Soft UI Context Provider
 import { SoftUIControllerProvider } from "context";
 
 ReactDOM.render(
-  <AuthProvider>
-    <BrowserRouter>
-      <SoftUIControllerProvider>
-        <App />
-      </SoftUIControllerProvider>
-    </BrowserRouter>
-  </AuthProvider>,
+  <QueryClientProvider client={new QueryClient()}>
+    <AuthProvider>
+      <BrowserRouter>
+        <SoftUIControllerProvider>
+          <App />
+        </SoftUIControllerProvider>
+      </BrowserRouter>
+    </AuthProvider>
+    <ReactQueryDevtools initialIsOpen />
+  </QueryClientProvider>,
   document.getElementById("root")
 );

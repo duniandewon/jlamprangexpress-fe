@@ -132,7 +132,7 @@ function Dashboard() {
         icon: <SpaceShipIcon size="25px" />,
       },
     ],
-    [isLoading]
+    [members, isLoading]
   );
 
   const renderHeader = useCallback(
@@ -162,7 +162,7 @@ function Dashboard() {
         </Grid>
       </Grid>
     ),
-    [isLoading]
+    [members, isLoading]
   );
 
   const renderCards = useCallback(
@@ -175,7 +175,7 @@ function Dashboard() {
         ))}
       </Grid>
     ),
-    [isLoading]
+    [members, isLoading]
   );
 
   const renderPackagesStatistic = useCallback(

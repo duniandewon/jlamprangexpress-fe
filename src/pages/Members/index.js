@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import Grid from "@mui/material/Grid";
@@ -15,10 +15,11 @@ import AddMember from "modals/AddMemberModal";
 import { Link } from "react-router-dom";
 
 function Users() {
-  const [members, setMembers] = useState([]);
-
   const queryClient = useQueryClient();
+
   const AddMemberModalRef = useRef();
+
+  const members = queryClient.getQueryData(["members"]);
 
   const dataTableData = useMemo(
     () => ({
@@ -75,10 +76,6 @@ function Users() {
     ),
     [members]
   );
-
-  useEffect(() => {
-    setMembers(queryClient.getQueryData(["members"]));
-  }, []);
 
   return (
     <DashboardLayout>

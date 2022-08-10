@@ -1,4 +1,5 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
@@ -19,6 +20,8 @@ const AddMemberModal = forwardRef((_, ref) => {
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+
+  const queryClient = useQueryClient();
 
   const resetStates = () => {
     setUsername("");
@@ -57,25 +60,44 @@ const AddMemberModal = forwardRef((_, ref) => {
     }
   };
 
+  const handleAddNewMember = (data) => {
+    const options = {
+      data,
+      method: "POST",
+      url: "/user/register",
+    };
+
+    return fetch(options);
+  };
+
+  const handleAddNewMemberMutation = useMutation(handleAddNewMember, {
+    onMutate: async (data) => {
+      toggleModal();
+
+      await queryClient.cancelQueries(["members"]);
+
+      const previousValue = queryClient.getQueryData(["members"]);
+
+      queryClient.setQueryData(["members"], (old) => [...old, data]);
+
+      return previousValue;
+    },
+    onError: (err, variables, previousValue) => queryClient.setQueryData(["todos"], previousValue),
+    onSettled: () => {
+      queryClient.invalidateQueries(["members"]);
+    },
+  });
+
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const options = {
-      method: "POST",
-      url: "/user/register",
-      data: { username, email, address, phoneNumber, password: "sajkvkj" },
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    try {
-      await fetch(options);
-
-      toggleModal();
-    } catch (err) {
-      console.log("register res err", err);
-    }
+    handleAddNewMemberMutation.mutate({
+      username,
+      email,
+      address,
+      phoneNumber,
+      password: "sajkvkj",
+    });
   };
 
   useImperativeHandle(ref, () => ({ toggleModal }), []);

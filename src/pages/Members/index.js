@@ -1,8 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useCallback, useMemo, useRef } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 
 import Grid from "@mui/material/Grid";
+
+import useMembers from "hooks/useMembers";
 
 import Box from "components/SuiBox";
 import Typography from "components/SuiTypography";
@@ -15,11 +16,9 @@ import AddMember from "modals/AddMemberModal";
 import { Link } from "react-router-dom";
 
 function Users() {
-  const queryClient = useQueryClient();
+  const { data: members, isLoading } = useMembers();
 
   const AddMemberModalRef = useRef();
-
-  const members = queryClient.getQueryData(["members"]);
 
   const dataTableData = useMemo(
     () => ({
@@ -30,12 +29,14 @@ function Users() {
         { Header: "email", accessor: "email", width: "20%" },
       ],
 
-      rows: members.map((member) => ({
-        ...member,
-        username: <Link to={`/member/members-detail?id=${member._id}`}>{member.username}</Link>,
-      })),
+      rows: members
+        ? members.map((member) => ({
+            ...member,
+            username: <Link to={`/member/members-detail?id=${member._id}`}>{member.username}</Link>,
+          }))
+        : [],
     }),
-    [members]
+    [members, isLoading]
   );
 
   const handleOpenAddMemberModal = () => AddMemberModalRef.current.toggleModal();
@@ -74,7 +75,7 @@ function Users() {
         canSearch
       />
     ),
-    [members]
+    [members, isLoading]
   );
 
   return (

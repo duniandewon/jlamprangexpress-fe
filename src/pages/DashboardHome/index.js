@@ -134,7 +134,7 @@ function Dashboard() {
         icon: <SpaceShipIcon size="25px" />,
       },
     ],
-    [members, isLoading]
+    [members, deliveries, isLoading]
   );
 
   const renderHeader = useCallback(

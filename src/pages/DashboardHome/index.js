@@ -3,6 +3,7 @@ import { useCallback, useMemo, useRef } from "react";
 import Grid from "@mui/material/Grid";
 
 import useMembers from "hooks/useMembers";
+import useDeliveries from "hooks/useDeliveries";
 
 import DashboardLayout from "layout/DashboardLayout";
 
@@ -102,6 +103,7 @@ function Dashboard() {
   const AddMemberModalRef = useRef();
 
   const { data: members, isLoading } = useMembers();
+  const { data: deliveries } = useDeliveries();
 
   const handleOpendepositModal = () => depositModalRef.current.toggleModal();
 
@@ -113,7 +115,7 @@ function Dashboard() {
     () => [
       {
         title: "paket",
-        amount: "66,474",
+        amount: deliveries ? deliveries.length : 0,
         icon: <CubeIcon size="25px" />,
       },
       {

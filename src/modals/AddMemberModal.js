@@ -82,7 +82,8 @@ const AddMemberModal = forwardRef((_, ref) => {
 
       return previousValue;
     },
-    onError: (err, variables, previousValue) => queryClient.setQueryData(["todos"], previousValue),
+    onError: (err, variables, previousValue) =>
+      queryClient.setQueryData(["members"], previousValue),
     onSettled: () => {
       queryClient.invalidateQueries(["members"]);
     },

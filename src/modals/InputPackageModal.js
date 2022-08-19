@@ -1,4 +1,6 @@
+/* eslint-disable no-underscore-dangle */
 import { forwardRef, useImperativeHandle, useMemo, useState } from "react";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
@@ -7,50 +9,21 @@ import Grid from "@mui/material/Grid";
 import TextField from "components/SuiInput";
 import Button from "components/SuiButton";
 import Select from "components/MySelect";
-
 import Typography from "components/SuiTypography";
 
-import style from "modals/modalStyle";
+import useFetchPrivate from "hooks/useFetchPrivate";
 
-const options = [
-  {
-    id: "KS-1",
-    value: "Hamid",
-  },
-  {
-    id: "KS-2",
-    value: "Sofie",
-  },
-  {
-    id: "KS-3",
-    value: "Hanan",
-  },
-  {
-    id: "KS-4",
-    value: "Abolfaz",
-  },
-  {
-    id: "KS-5",
-    value: "Syafiq",
-  },
-  {
-    id: "KS-6",
-    value: "Upang",
-  },
-  {
-    id: "KS-7",
-    value: "Verra",
-  },
-];
+import style from "modals/modalStyle";
 
 const InputPackageModal = forwardRef((_, ref) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [member, setMember] = useState({});
-  const [recietNumber, setRecietNumber] = useState("");
+  const [receiptNumber, setReceiptNumber] = useState("");
   const [expedition, setExpedition] = useState("");
   const [reciever, setReciever] = useState("");
   const [weight, setWeight] = useState("");
   const [address, setAddress] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [additionalFee, setAdditionalFee] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [cost, setCost] = useState(0);
@@ -58,9 +31,19 @@ const InputPackageModal = forwardRef((_, ref) => {
 
   const [step, setStep] = useState(0);
 
+  const fetch = useFetchPrivate();
+  const queryClient = useQueryClient();
+
+  const members = queryClient.getQueryData(["members"]);
+
+  const options = useMemo(
+    () => (members ? members.map((mem) => ({ id: mem._id, value: mem.username })) : []),
+    [members]
+  );
+
   const resetForm = () => {
     setMember({});
-    setRecietNumber("");
+    setReceiptNumber("");
     setExpedition("");
     setReciever("");
     setWeight("");
@@ -77,21 +60,52 @@ const InputPackageModal = forwardRef((_, ref) => {
     setModalOpen((prevState) => !prevState);
   };
 
+  const handleAddNewPackege = (data) => {
+    const configs = {
+      data,
+      method: "POST",
+      url: "/delivery",
+    };
+
+    return fetch(configs);
+  };
+
+  const handleAddNewPackegeMutation = useMutation(handleAddNewPackege, {
+    onMutate: async (data) => {
+      toggleModal();
+
+      await queryClient.cancelQueries(["deliveries"]);
+
+      const previousValue = queryClient.getQueryData(["deliveries"]);
+
+      queryClient.setQueryData(["members"], (old) => [...old, data]);
+
+      return previousValue;
+    },
+    onError: (err, variables, previousValue) =>
+      queryClient.setQueryData(["deliveries"], previousValue),
+    onSettled: () => {
+      queryClient.invalidateQueries(["deliveries"]);
+    },
+  });
+
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log({
+    handleAddNewPackegeMutation.mutate({
       user: member.id,
-      recietNumber,
+      shippingCost: cost,
+      receiptNumber,
       expedition,
-      reciever,
+      reciever: {
+        name: reciever,
+        address,
+        phoneNumber,
+      },
       weight,
-      address,
       additionalFee,
       discount,
-      cost,
       platform,
     });
-    toggleModal();
   };
 
   const handleSelect = (mem) => setMember(mem);
@@ -100,8 +114,8 @@ const InputPackageModal = forwardRef((_, ref) => {
     const { name, value } = e.target;
 
     switch (name) {
-      case "recietNumber":
-        setRecietNumber(value);
+      case "receiptNumber":
+        setReceiptNumber(value);
         break;
 
       case "expedition":
@@ -118,6 +132,10 @@ const InputPackageModal = forwardRef((_, ref) => {
 
       case "address":
         setAddress(value);
+        break;
+
+      case "phoneNumber":
+        setPhoneNumber(value);
         break;
 
       case "additionalFee":
@@ -154,19 +172,7 @@ const InputPackageModal = forwardRef((_, ref) => {
   const handleCheckReciet = () => {
     if (!Object.keys(member).length) return alert("Pilih member terlebih dahulu");
 
-    if (!recietNumber.length) return alert("Isi nomor resi terlebih dahulu");
-
-    setReciever("Abolfaz");
-
-    setAddress("Depok");
-
-    setWeight("139");
-
-    setCost(20000);
-
-    setAdditionalFee(5000);
-
-    setDiscount(0);
+    if (!receiptNumber.length) return alert("Isi nomor resi terlebih dahulu");
 
     return setStep(1);
   };
@@ -185,8 +191,8 @@ const InputPackageModal = forwardRef((_, ref) => {
               type="text"
               size="large"
               placeholder="Nomer Resi"
-              name="recietNumber"
-              value={recietNumber}
+              name="receiptNumber"
+              value={receiptNumber}
               onChange={handleChange}
             />
           </Grid>
@@ -222,7 +228,7 @@ const InputPackageModal = forwardRef((_, ref) => {
 
   const renderPackageInfo = () => (
     <Grid container spacing={3}>
-      <Grid item xs={12} lg={6}>
+      <Grid item xs={12} lg={4}>
         <TextField
           type="text"
           size="large"
@@ -232,13 +238,23 @@ const InputPackageModal = forwardRef((_, ref) => {
           onChange={handleChange}
         />
       </Grid>
-      <Grid item xs={12} lg={6}>
+      <Grid item xs={12} lg={4}>
         <TextField
           type="text"
           size="large"
           placeholder="Alamat / kota tujuan"
           name="address"
           value={address}
+          onChange={handleChange}
+        />
+      </Grid>
+      <Grid item xs={12} lg={4}>
+        <TextField
+          type="text"
+          size="large"
+          placeholder="Nomer Handphone"
+          name="phoneNumber"
+          value={phoneNumber}
           onChange={handleChange}
         />
       </Grid>
@@ -305,7 +321,7 @@ const InputPackageModal = forwardRef((_, ref) => {
 
   return (
     <Modal open={modalOpen} onClose={toggleModal}>
-      <Box sx={style(900)}>
+      <Box sx={style(800)}>
         <Typography variant="h3" mb={2}>
           Input Paket
         </Typography>

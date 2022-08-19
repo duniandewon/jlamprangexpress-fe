@@ -37,12 +37,16 @@ function MembersDetail() {
         {
           title: "tagihan",
           icon: <PaidIcon fontSize="medium" sx={{ color: "rgb(52, 71, 103)" }} />,
-          number: `Rp ${memberDetails.credit}`,
+          number: Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(
+            memberDetails.credit
+          ),
         },
         {
           title: "saldo",
           icon: <AccountBalanceWalletIcon fontSize="medium" sx={{ color: "rgb(52, 71, 103)" }} />,
-          number: `Rp ${memberDetails.balance}`,
+          number: Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(
+            memberDetails.balance
+          ),
         },
         {
           title: "paket",
@@ -69,9 +73,20 @@ function MembersDetail() {
         { Header: "tarif", accessor: "fee" },
       ],
 
-      rows: [],
+      rows: memberDetails.deliveries
+        ? memberDetails.deliveries.map((delivery) => ({
+            resi: delivery.receiptNumber,
+            reciever: delivery.reciever.name,
+            address: delivery.reciever.address,
+            date: "19/08/2020",
+            expedition: delivery.expedition,
+            fee: Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(
+              delivery.shippingCost
+            ),
+          }))
+        : [],
     }),
-    []
+    [memberDetails]
   );
 
   const renderPackages = useCallback(
@@ -84,7 +99,7 @@ function MembersDetail() {
         canSearch
       />
     ),
-    []
+    [memberDetails]
   );
 
   const renderCard = useCallback(

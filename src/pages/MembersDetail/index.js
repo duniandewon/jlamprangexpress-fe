@@ -38,7 +38,7 @@ function MembersDetail() {
           title: "tagihan",
           icon: <PaidIcon fontSize="medium" sx={{ color: "rgb(52, 71, 103)" }} />,
           number: Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(
-            memberDetails.credit
+            memberDetails.debt
           ),
         },
         {

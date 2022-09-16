@@ -26,8 +26,6 @@ import DepositModal from "modals/DepositModal";
 import InputPackagesModal from "modals/InputPackageModal";
 import AddMember from "modals/AddMemberModal";
 
-import data from "pages/DashboardHome/dataTableData";
-
 const chartData = {
   labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
   datasets: [
@@ -137,34 +135,57 @@ function Dashboard() {
     [members, deliveries, isLoading]
   );
 
+  const packagesData = useMemo(
+    () => ({
+      columns: [
+        { Header: "resi", accessor: "resi", width: "15%" },
+        { Header: "member", accessor: "member", width: "20%" },
+        { Header: "penerima", accessor: "reciever", width: "20%" },
+        { Header: "tanggal", accessor: "date", width: "15%" },
+        { Header: "Eksoedisi", accessor: "expedition", width: "10%" },
+        { Header: "Tagihan", accessor: "fee" },
+      ],
+
+      rows: deliveries
+        ? deliveries.map(({ receiptNumber, user, createdAt, expedition, shippingCost }) => ({
+            resi: receiptNumber,
+            member: user,
+            reciever: "-",
+            date: createdAt,
+            expedition,
+            fee: shippingCost,
+          }))
+        : [],
+    }),
+    [deliveries, isLoading]
+  );
+
   const renderHeader = useCallback(
     () => (
-      <Grid container mb={3}>
-        <Grid item xs={12} md={8}>
-          <Typography variant="h2">Dashboard</Typography>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Box
-            sx={{
-              display: "flex",
-              gap: 2,
-              justifyContent: "flex-end",
-            }}
-          >
-            <Button variant="gradient" color="dark" onClick={handleOpenAddMemberModal}>
-              Add Memeber
-            </Button>
-            <Button variant="gradient" color="dark" onClick={handleOpendepositModal}>
-              Deposit
-            </Button>
-            <Button variant="gradient" color="dark" onClick={handleOpenInputPackageModal}>
-              Input Paket
-            </Button>
-          </Box>
-        </Grid>
-      </Grid>
+      <Box sx={{ display: "flex", alignItems: "center" }} mb={3}>
+        <Typography variant="h2" sx={{ flex: 1 }}>
+          Dashboard
+        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button variant="gradient" color="dark" onClick={handleOpenAddMemberModal}>
+            Add Memeber
+          </Button>
+          <Button variant="gradient" color="dark" onClick={handleOpendepositModal}>
+            Deposit
+          </Button>
+          <Button variant="gradient" color="dark" onClick={handleOpenInputPackageModal}>
+            Input Paket
+          </Button>
+        </Box>
+      </Box>
     ),
-    [members, isLoading]
+    []
   );
 
   const renderCards = useCallback(
@@ -177,7 +198,7 @@ function Dashboard() {
         ))}
       </Grid>
     ),
-    [members, isLoading]
+    [members, deliveries, isLoading]
   );
 
   const renderPackagesStatistic = useCallback(
@@ -202,7 +223,7 @@ function Dashboard() {
     () => (
       <Table
         title="List Paket"
-        table={data}
+        table={packagesData}
         action="input paket"
         onClick={handleOpenInputPackageModal}
         entriesPerPage={{ defaultValue: 15, entries: [10, 15, 20, 25] }}

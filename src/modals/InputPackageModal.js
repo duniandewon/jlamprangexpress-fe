@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 /* eslint-disable no-underscore-dangle */
 import { forwardRef, useImperativeHandle, useMemo, useState } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";

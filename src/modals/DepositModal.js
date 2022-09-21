@@ -1,5 +1,6 @@
-/* eslint-disable no-console */
-import { forwardRef, useImperativeHandle, useState } from "react";
+/* eslint-disable no-underscore-dangle */
+import { forwardRef, useImperativeHandle, useMemo, useState } from "react";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
@@ -11,43 +12,24 @@ import Button from "components/SuiButton";
 import Typography from "components/SuiTypography";
 import Select from "components/MySelect";
 
-import style from "modals/modalStyle";
+import useFetchPrivate from "hooks/useFetchPrivate";
 
-const options = [
-  {
-    id: "KS-1",
-    value: "Hamid",
-  },
-  {
-    id: "KS-2",
-    value: "Sofie",
-  },
-  {
-    id: "KS-3",
-    value: "Hanan",
-  },
-  {
-    id: "KS-4",
-    value: "Abolfaz",
-  },
-  {
-    id: "KS-5",
-    value: "Syafiq",
-  },
-  {
-    id: "KS-6",
-    value: "Upang",
-  },
-  {
-    id: "KS-7",
-    value: "Verra",
-  },
-];
+import style from "modals/modalStyle";
 
 const DepositModal = forwardRef((_, ref) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [deposit, setDeposit] = useState("");
   const [member, setMember] = useState({});
+
+  const queryClient = useQueryClient();
+  const fetch = useFetchPrivate();
+
+  const members = queryClient.getQueryData(["members"]);
+
+  const options = useMemo(
+    () => (members ? members.map((mem) => ({ id: mem._id, value: mem.username })) : []),
+    [members]
+  );
 
   const toggleModal = () => setModalOpen((prevState) => !prevState);
 
@@ -64,10 +46,42 @@ const DepositModal = forwardRef((_, ref) => {
     setMember({});
   };
 
+  const handleNewDposit = (data) => {
+    const configs = {
+      data: {
+        transactionType: "credit",
+        ...data,
+      },
+      method: "POST",
+      url: "/transaction",
+    };
+
+    return fetch(configs);
+  };
+
+  const handleNewDpositMutation = useMutation(handleNewDposit, {
+    onMutate: async (data) => {
+      toggleModal();
+
+      await queryClient.cancelQueries(["transactions"]);
+
+      const previousValue = queryClient.getQueryData(["transactions"]);
+
+      queryClient.setQueryData(["transactions"], (old) => [...old, data]);
+
+      return previousValue;
+    },
+    onError: (err, variables, previousValue) =>
+      queryClient.setQueryData(["deliveries"], previousValue),
+    onSettled: () => {
+      queryClient.invalidateQueries(["deliveries"]);
+    },
+  });
+
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log({ deposit, member });
-    if (Object.keys(member).length) toggleModal();
+    if (Object.keys(member).length)
+      handleNewDpositMutation.mutate({ user: member.id, amount: deposit });
     resetState();
   };
 

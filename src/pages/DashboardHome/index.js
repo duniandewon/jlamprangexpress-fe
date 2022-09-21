@@ -4,6 +4,7 @@ import Grid from "@mui/material/Grid";
 
 import useMembers from "hooks/useMembers";
 import useDeliveries from "hooks/useDeliveries";
+import useTransactions from "hooks/useTransactions";
 
 import DashboardLayout from "layout/DashboardLayout";
 
@@ -25,6 +26,8 @@ import Card from "pages/DashboardHome/Card";
 import DepositModal from "modals/DepositModal";
 import InputPackagesModal from "modals/InputPackageModal";
 import AddMember from "modals/AddMemberModal";
+
+import formatCurrency from "utils/formatCurrency";
 
 const chartData = {
   labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
@@ -95,6 +98,9 @@ const doughnutChartData = {
   },
 };
 
+const LOCALE = "id-ID";
+const CURRENCY = "IDR";
+
 function Dashboard() {
   const depositModalRef = useRef();
   const inputPackageModalRef = useRef();
@@ -102,6 +108,7 @@ function Dashboard() {
 
   const { data: members, isLoading } = useMembers();
   const { data: deliveries } = useDeliveries();
+  const { data: transactions } = useTransactions();
 
   const handleOpendepositModal = () => depositModalRef.current.toggleModal();
 
@@ -109,8 +116,16 @@ function Dashboard() {
 
   const handleOpenAddMemberModal = () => AddMemberModalRef.current.toggleModal();
 
-  const cards = useMemo(
-    () => [
+  const cards = useMemo(() => {
+    const membersCount = members ? members.length : 0;
+    const totalDeposit = transactions
+      ? transactions.reduce((prevVal, curVal) => {
+          if (curVal.transactionType === "credit") return prevVal + curVal.amount;
+          return prevVal;
+        }, 0)
+      : 0;
+
+    return [
       {
         title: "paket",
         amount: deliveries ? deliveries.length : 0,
@@ -118,22 +133,21 @@ function Dashboard() {
       },
       {
         title: "member",
-        amount: members ? members.length : "0",
+        amount: membersCount,
         icon: <ShopIcon size="25px" />,
       },
       {
         title: "tot. Deposit",
-        amount: "Rp 1,779,492,276",
+        amount: formatCurrency(totalDeposit, LOCALE, CURRENCY),
         icon: <CreditCardIcon size="25px" />,
       },
       {
         title: "tot. ongkir",
-        amount: "Rp 1,798,565,401",
+        amount: formatCurrency(1798565401, LOCALE, CURRENCY),
         icon: <SpaceShipIcon size="25px" />,
       },
-    ],
-    [members, deliveries, isLoading]
-  );
+    ];
+  }, [members, deliveries, transactions, isLoading]);
 
   const packagesData = useMemo(
     () => ({
@@ -149,7 +163,7 @@ function Dashboard() {
       rows: deliveries
         ? deliveries.map(({ receiptNumber, user, createdAt, expedition, shippingCost }) => ({
             resi: receiptNumber,
-            member: user,
+            member: user.username,
             reciever: "-",
             date: createdAt,
             expedition,
@@ -157,7 +171,7 @@ function Dashboard() {
           }))
         : [],
     }),
-    [deliveries, isLoading]
+    [deliveries]
   );
 
   const renderHeader = useCallback(

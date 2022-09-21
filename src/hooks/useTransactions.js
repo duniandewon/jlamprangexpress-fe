@@ -2,13 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 
 import useFetchPrivate from "hooks/useFetchPrivate";
 
-const useDeliveries = () => {
+const useTransactions = () => {
   const fetch = useFetchPrivate();
 
   const getDeliveries = async () => {
     const options = {
       method: "GET",
-      url: "delivery?page=0&limit=15",
+      url: "transaction?page=0&limit=15",
     };
 
     const res = await fetch(options);
@@ -16,9 +16,9 @@ const useDeliveries = () => {
     return res.data;
   };
 
-  const { data, isLoading } = useQuery(["deliveries"], getDeliveries);
+  const { data, isLoading } = useQuery(["transactions"], getDeliveries);
 
   return { data, isLoading };
 };
 
-export default useDeliveries;
+export default useTransactions;

@@ -9,7 +9,7 @@ const useMembers = () => {
   const getMembers = async () => {
     const options = {
       method: "GET",
-      url: "user?page=1&limit=15",
+      url: "user?page=0&limit=15",
     };
 
     const res = await fetch(options);

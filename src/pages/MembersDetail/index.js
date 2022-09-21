@@ -20,6 +20,11 @@ import Table from "components/SuiTable";
 
 import DashboardLayout from "layout/DashboardLayout";
 
+import formatCurrency from "utils/formatCurrency";
+
+const LOCALE = "id-ID";
+const CURRENCY = "IDR";
+
 function MembersDetail() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [memberDetails, setMemberDetails] = useState({});
@@ -37,16 +42,12 @@ function MembersDetail() {
         {
           title: "tagihan",
           icon: <PaidIcon fontSize="medium" sx={{ color: "rgb(52, 71, 103)" }} />,
-          number: Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(
-            memberDetails.debt
-          ),
+          number: formatCurrency(memberDetails.debt, LOCALE, CURRENCY),
         },
         {
           title: "saldo",
           icon: <AccountBalanceWalletIcon fontSize="medium" sx={{ color: "rgb(52, 71, 103)" }} />,
-          number: Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(
-            memberDetails.balance
-          ),
+          number: formatCurrency(memberDetails.balance, LOCALE, CURRENCY),
         },
         {
           title: "paket",
@@ -80,9 +81,7 @@ function MembersDetail() {
             address: delivery.reciever.address,
             date: "19/08/2020",
             expedition: delivery.expedition,
-            fee: Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(
-              delivery.shippingCost
-            ),
+            fee: formatCurrency(delivery.shippingCost, LOCALE, CURRENCY),
           }))
         : [],
     }),

@@ -2,10 +2,12 @@ import Dashboard from "pages/DashboardHome";
 import Members from "pages/Members";
 import Login from "pages/login";
 import MembersDetail from "pages/MembersDetail";
+import Transactions from "pages/Transactions";
 
 // Soft UI Dashboard PRO React icons
 import Shop from "examples/Icons/Shop";
 import Cube from "examples/Icons/Cube";
+import CreditCard from "examples/Icons/CreditCard";
 
 const routes = [
   {
@@ -34,6 +36,16 @@ const routes = [
     key: "members-detail",
     route: "/member/members-detail",
     component: <MembersDetail />,
+    protected: true,
+  },
+  {
+    type: "collapse",
+    name: "Transaksi",
+    key: "transaction",
+    route: "/transaction",
+    noCollapse: true,
+    icon: <CreditCard size="12px" />,
+    component: <Transactions />,
     protected: true,
   },
   {

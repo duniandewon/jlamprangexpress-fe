@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 // react-router components
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
@@ -25,7 +25,6 @@ import CssBaseline from "@mui/material/CssBaseline";
 // Soft UI Dashboard PRO React components
 
 // Soft UI Dashboard PRO React example components
-import Sidenav from "examples/Sidenav";
 
 // Soft UI Dashboard PRO React themes
 import theme from "assets/theme";
@@ -34,36 +33,16 @@ import theme from "assets/theme";
 import routes from "routes";
 
 // Soft UI Dashboard PRO React contexts
-import { useSoftUIController, setMiniSidenav } from "context";
-
-// Images
-import brand from "assets/images/logo-ct.png";
+import { useSoftUIController } from "context";
 
 import ProtectedRoute from "utils/ProtectedRoute";
 import PublicRoute from "utils/PublicRoute";
 import PersistLogin from "utils/PersistLogin";
 
 export default function App() {
-  const [controller, dispatch] = useSoftUIController();
-  const { miniSidenav, direction, layout, sidenavColor } = controller;
-  const [onMouseEnter, setOnMouseEnter] = useState(false);
+  const [controller] = useSoftUIController();
+  const { direction } = controller;
   const { pathname } = useLocation();
-
-  // Open sidenav when mouse enter on mini sidenav
-  const handleOnMouseEnter = () => {
-    if (miniSidenav && !onMouseEnter) {
-      setMiniSidenav(dispatch, false);
-      setOnMouseEnter(true);
-    }
-  };
-
-  // Close sidenav when mouse leave mini sidenav
-  const handleOnMouseLeave = () => {
-    if (onMouseEnter) {
-      setMiniSidenav(dispatch, true);
-      setOnMouseEnter(false);
-    }
-  };
 
   // Setting the dir attribute for the body element
   useEffect(() => {
@@ -96,16 +75,6 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {layout === "dashboard" && (
-        <Sidenav
-          color={sidenavColor}
-          brand={brand}
-          brandName="Soft UI Dashboard PRO"
-          routes={routes}
-          onMouseEnter={handleOnMouseEnter}
-          onMouseLeave={handleOnMouseLeave}
-        />
-      )}
       <Routes>
         <Route element={<PersistLogin />}>
           <Route element={<ProtectedRoute />}>{getRoutes(PRIVATE_ROUTES)}</Route>

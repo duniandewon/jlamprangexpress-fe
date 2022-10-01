@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import React, { useCallback, useMemo, useRef } from "react";
+import React, { useMemo, useRef } from "react";
 
 import Grid from "@mui/material/Grid";
 
@@ -43,41 +43,35 @@ function Transactions() {
 
   const handleOpendepositModal = () => depositModalRef.current.toggleModal();
 
-  const renderHeader = useCallback(
-    () => (
-      <Grid container mb={3}>
-        <Grid item xs={12} md={8}>
-          <Typography variant="h2">Transaksi</Typography>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Box
-            sx={{
-              display: "flex",
-              gap: 2,
-              justifyContent: "flex-end",
-            }}
-          >
-            <Button variant="gradient" color="dark" onClick={handleOpendepositModal}>
-              deposite
-            </Button>
-          </Box>
-        </Grid>
+  const renderHeader = () => (
+    <Grid container mb={3}>
+      <Grid item xs={12} md={8}>
+        <Typography variant="h2">Transaksi</Typography>
       </Grid>
-    ),
-    []
+      <Grid item xs={12} md={4}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button variant="gradient" color="dark" onClick={handleOpendepositModal}>
+            deposite
+          </Button>
+        </Box>
+      </Grid>
+    </Grid>
   );
 
-  const renderTransactionsList = useCallback(
-    () => (
-      <Table
-        title="List Transaksi"
-        table={transactionsData}
-        entriesPerPage={{ defaultValue: 15, entries: [10, 15, 20, 25] }}
-        pagination={{ variant: "gradient", color: "dark" }}
-        canSearch
-      />
-    ),
-    [transactions, isLoading]
+  const renderTransactionsList = () => (
+    <Table
+      title="List Transaksi"
+      table={transactionsData}
+      entriesPerPage={{ defaultValue: 15, entries: [10, 15, 20, 25] }}
+      pagination={{ variant: "gradient", color: "dark" }}
+      canSearch
+    />
   );
 
   return (

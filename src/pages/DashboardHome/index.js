@@ -161,14 +161,16 @@ function Dashboard() {
       ],
 
       rows: deliveries
-        ? deliveries.map(({ receiptNumber, user, createdAt, expedition, shippingCost }) => ({
-            resi: receiptNumber,
-            member: user.username,
-            reciever: "-",
-            date: createdAt,
-            expedition,
-            fee: shippingCost,
-          }))
+        ? deliveries.map(
+            ({ receiptNumber, user, reciever, createdAt, expedition, shippingCost }) => ({
+              resi: receiptNumber,
+              member: user ? user.username : "-",
+              reciever: reciever ? reciever.name : "-",
+              date: createdAt,
+              expedition,
+              fee: shippingCost,
+            })
+          )
         : [],
     }),
     [deliveries]

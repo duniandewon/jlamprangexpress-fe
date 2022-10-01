@@ -3,6 +3,7 @@ import Members from "pages/Members";
 import Login from "pages/login";
 import MembersDetail from "pages/MembersDetail";
 import Transactions from "pages/Transactions";
+import Packeges from "pages/Packeges";
 
 // Soft UI Dashboard PRO React icons
 import Shop from "examples/Icons/Shop";
@@ -55,7 +56,7 @@ const routes = [
     route: "/paket",
     noCollapse: true,
     icon: <Cube size="12px" />,
-    component: <Dashboard />,
+    component: <Packeges />,
     protected: true,
   },
   {
